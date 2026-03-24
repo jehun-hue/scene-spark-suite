@@ -92,3 +92,32 @@ export const renderShort = async (file: File, analysisJson: any): Promise<Blob> 
 
   return response.blob();
 };
+// Step-based Analysis API
+export const stepUpload = async (file: File): Promise<any> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_BASE_URL}/api/step/upload`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: formData,
+  });
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
+
+const callStepApi = async (endpoint: string, body: any) => {
+  const response = await fetch(`${API_BASE_URL}/api/step/${endpoint}`, {
+    method: "POST",
+    headers: { ...getHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) throw new Error(await response.text());
+  return response.json();
+};
+
+export const stepAnalyze = (fileId: string) => callStepApi("analyze", { file_id: fileId });
+export const stepScript = (fileId: string, analysisData: any) => callStepApi("script", { file_id: fileId, analysis_data: analysisData });
+export const stepTitles = (fileId: string, analysisData: any, scriptData: any) => callStepApi("titles", { file_id: fileId, analysis_data: analysisData, script_data: scriptData });
+export const stepEditpoints = (fileId: string, scriptData: any) => callStepApi("editpoints", { file_id: fileId, script_data: scriptData });
+export const stepVariations = (analysisData: any, scriptData: any) => callStepApi("variations", { analysis_data: analysisData, script_data: scriptData });
+export const stepKeywords = (analysisData: any) => callStepApi("keywords", { analysis_data: analysisData });
