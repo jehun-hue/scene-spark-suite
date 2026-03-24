@@ -35,7 +35,10 @@ const ResultPage = () => {
       <ExportButtons />
       <TimelineBar data={result?.timeline_ratio} />
       <ContentIdCards data={result?.content_id_analysis} />
-      <ScriptTable data={result?.edit_map?.edit_decision_list} />
+      <ScriptTable 
+        data={result?.edit_map?.edit_decision_list} 
+        thumbnails={result?.thumbnails}
+      />
     </div>
   );
 };

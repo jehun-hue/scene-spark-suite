@@ -73,3 +73,22 @@ export const exportFCPXML = (data: any) => downloadFile("/api/export/fcpxml", da
 export const exportPremiere = (data: any) => downloadFile("/api/export/premiere", data, "project.xml");
 export const exportSRT = (data: any) => downloadFile("/api/export/srt", data, "subtitles.srt");
 export const exportZip = (data: any) => downloadFile("/api/export/zip", data, "scene-spark-export.zip");
+
+export const renderShort = async (file: File, analysisJson: any): Promise<Blob> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("analysis", JSON.stringify(analysisJson));
+
+  const response = await fetch(`${API_BASE_URL}/api/render`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Rendering Failed: ${errorText}`);
+  }
+
+  return response.blob();
+};
