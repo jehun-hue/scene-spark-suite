@@ -323,11 +323,11 @@ const ResultPage = () => {
                       <div>
                         <p className="text-green-400 font-semibold mb-1">장점:</p>
                         <ul className="list-disc list-inside space-y-1 mb-2">
-                          {value.pros.map((p: string, i: number) => <li key={i}>{p}</li>)}
+                          {(value.pros || []).map((p: string, i: number) => <li key={i}>{p}</li>)}
                         </ul>
                         <p className="text-red-400 font-semibold mb-1">단점:</p>
                         <ul className="list-disc list-inside space-y-1">
-                          {value.cons.map((c: string, i: number) => <li key={i}>{c}</li>)}
+                          {(value.cons || []).map((c: string, i: number) => <li key={i}>{c}</li>)}
                         </ul>
                       </div>
                     )
@@ -371,7 +371,7 @@ const ResultPage = () => {
                         {safeRender(kw['한국어'] || kw.korean || kw)}
                       </span>
                     ))
-                  : (searchKw['한국어'] || searchKw.korean || []).map((kw: any, i: number) => (
+                  : (searchKw?.['한국어'] || searchKw?.korean || []).map((kw: any, i: number) => (
                       <span key={i} className="bg-purple-900/50 text-purple-300 px-3 py-1 rounded-full text-sm">
                         {safeRender(kw)}
                       </span>
@@ -388,7 +388,7 @@ const ResultPage = () => {
                         {safeRender(kw['영어'] || kw.english || kw)}
                       </span>
                     ))
-                  : (searchKw['영어'] || searchKw.english || []).map((kw: any, i: number) => (
+                  : (searchKw?.['영어'] || searchKw?.english || []).map((kw: any, i: number) => (
                       <span key={i} className="bg-blue-900/50 text-blue-300 px-3 py-1 rounded-full text-sm">
                         {safeRender(kw)}
                       </span>
