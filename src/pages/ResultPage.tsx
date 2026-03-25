@@ -35,7 +35,7 @@ const ResultPage = () => {
 
   const vd = deepGet(result, 'viral_dashboard', 'viral_probability_dashboard', 'analysis_metadata.viral_dashboard', '🎯 바이럴 확률 대시보드 (v2.1)', '바이럴_확률_대시보드');
   const safetyChannel = result?.['channel_safety'] || result?.['채널 안전'] || deepGet(result, 'safety.channel_safety', 'safety.채널_안전');
-  const safetyRevenue = result?.['profit_risk'] || result?.['수익 리스크'] || deepGet(result, 'safety.revenue_risk', 'safety.수익_리스크');
+  const safetyRevenue = result?.['revenue_risk'] || result?.['profit_risk'] || result?.['수익 리스크'] || deepGet(result, 'safety.revenue_risk', 'safety.수익_리스크');
   const targetData = deepGet(result, 'target', 'target_settings', '타겟 설정');
   const deepDive = deepGet(result, 'deep_dive_report', '심층 조사 보고서');
   const productionData = deepGet(result, 'production', 'final_production_blueprint', '최종_프로덕션_블루프린트');
@@ -46,6 +46,10 @@ const ResultPage = () => {
   const finalScript = deepGet(result, 'final_production_blueprint.final_script', 'production.final_script', '최종_대본');
   const emotionCurve = deepGet(result, 'final_production_blueprint.emotion_curve_design', 'final_production_blueprint.emotion_curve', 'production.emotion_curve', '감정_곡선') || [];
   const viralRec = deepGet(result, 'viral_probability_optimization_recommendation', 'viral_probability_optimization_recommendations', 'optimization_recommendation');
+  const anchorTarget = deepGet(result, 'target.anchor_target', 'target.anchor', 'target_settings.anchor_target');
+  const subTarget = deepGet(result, 'target.sub_target', 'target.sub', 'target_settings.sub_target');
+  const timelineRatio = deepGet(result, 'timeline_ratio', 'edit_map.timeline_ratio', 'edit_engineering.timeline_ratio');
+  const contentId = deepGet(result, 'content_id_analysis', 'edit_map.content_id_analysis');
 
   console.log("Analysis Result Keys:", result ? Object.keys(result) : "no result");
   console.log("Full Result:", JSON.stringify(result, null, 2).substring(0, 2000));
