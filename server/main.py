@@ -625,13 +625,30 @@ async def export_srt(data: dict):
 @app.post("/api/export/zip")
 async def export_zip(data: dict):
     try:
-        fcp = generate_fcpxml(data)
-        pre = generate_premiere_xml(data)
-        srt = generate_srt(data)
-        zip_bytes = create_export_zip(fcp, pre, srt)
-        return Response(content=zip_bytes, media_type="application/zip", 
-                        headers={"Content-Disposition": "attachment; filename=scene-spark-export.zip"})
+        temp_dir = os.path.join(os.path.dirname(__file__), "temp")
+        video_path = None
+        video_filename = 'source.mp4'
+        if os.path.exists(temp_dir):
+            for f in sorted(os.listdir(temp_dir), reverse=True):
+                if f.startswith("last_video_"):
+                    video_path = os.path.join(temp_dir, f)
+                    video_filename = f.replace("last_video_", "")
+                    break
+        
+        # Generate FCPXML with consistent filename
+        fcp = generate_fcpxml(data, video_filename=video_filename)
+        
+        # Create ZIP with: (1) video, (2) FCPXML, (3) JSON
+        zip_bytes = create_export_zip(fcp, video_path=video_path, analysis_json=data)
+        
+        return Response(
+            content=zip_bytes, 
+            media_type="application/zip", 
+            headers={"Content-Disposition": f"attachment; filename=scene-spark-export-{video_filename}.zip"}
+        )
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return JSONResponse(status_code=400, content={"error": str(e)})
 
 if __name__ == "__main__":

@@ -62,7 +62,7 @@ def generate_fcpxml(analysis_json: dict, video_filename: str = 'source.mp4', fps
     lines.append('  <resources>')
     lines.append(f'    <format id="r0" name="FFVideoFormat1080p{fps}" frameDuration="{_seconds_to_rational(1.0/fps, fps)}" width="1920" height="1080"/>')
     lines.append(f'    <asset id="r1" name="{video_filename}" duration="{total_dur_rat}" hasVideo="1" hasAudio="1" format="r0">')
-    lines.append(f'      <media-rep kind="original-media" src="./{video_filename}"/>')
+    lines.append(f'      <media-rep kind="original-media" src="{video_filename}"/>')
     lines.append('    </asset>')
     lines.append('    <effect id="r2" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>')
     lines.append('  </resources>')
