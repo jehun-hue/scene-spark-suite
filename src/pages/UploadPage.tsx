@@ -66,92 +66,47 @@ const UploadPage = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError("분석할 파일을 먼저 선택해주세요.");
-      return;
-    }
-
+    if (!selectedFile) return;
     setIsLoading(true);
     setError(null);
     setCurrentStep(1);
     
-    let fileId = "";
-    let analysisData = null;
-    let scriptData = null;
-    let titlesData = null;
-    let editData = null;
-    let variationsData = null;
-    let keywordsData = null;
-    let thumbnails = [];
-
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    
     try {
-      // Step 1: Upload
-      updateStatus(1, 'running');
-      const res1 = await stepUpload(selectedFile);
-      if (res1.status === 'error') throw new Error(res1.message);
-      fileId = res1.file_id;
-      thumbnails = res1.thumbnails || [];
-      updateStatus(1, 'complete');
-
-      // Step 2: Analyze
-      updateStatus(2, 'running');
-      const res2 = await stepAnalyze(fileId);
-      if (res2.status === 'error') throw new Error(res2.message);
-      analysisData = res2.data;
-      updateStatus(2, 'complete');
-
-      // Step 3: Script
-      updateStatus(3, 'running');
-      const res3 = await stepScript(fileId, analysisData);
-      if (res3.status === 'error') throw new Error(res3.message);
-      scriptData = res3.data;
-      updateStatus(3, 'complete');
-
-      // Step 4: Titles
-      updateStatus(4, 'running');
-      const res4 = await stepTitles(fileId, analysisData, scriptData);
-      if (res4.status === 'error') throw new Error(res4.message);
-      titlesData = res4.data;
-      updateStatus(4, 'complete');
-
-      // Step 5: Editpoints
-      updateStatus(5, 'running');
-      const res5 = await stepEditpoints(fileId, scriptData);
-      if (res5.status === 'error') throw new Error(res5.message);
-      editData = res5.data;
-      updateStatus(5, 'complete');
-
-      // Step 6: Variations
-      updateStatus(6, 'running');
-      const res6 = await stepVariations(analysisData, scriptData);
-      if (res6.status === 'error') throw new Error(res6.message);
-      variationsData = res6.data;
-      updateStatus(6, 'complete');
-
-      // Step 7: Keywords
-      updateStatus(7, 'running');
-      const res7 = await stepKeywords(analysisData);
-      if (res7.status === 'error') throw new Error(res7.message);
-      keywordsData = res7.data;
-      updateStatus(7, 'complete');
-
-      // Merge Result
-      const mergedResult = {
-        ...analysisData,
-        ...scriptData,
-        ...titlesData,
-        ...editData,
-        ...variationsData,
-        ...keywordsData,
-        thumbnails
-      };
-
-      useAnalysisStore.getState().setResult(mergedResult);
-      navigate("/result");
-
+      // 단일 API 호출로 전체 분석
+      setStepStatus(prev => ({ ...prev, 1: 'running' }));
+      // stepTime은 useEffect에서 status가 'running'일 때 자동으로 타이머가 돌아감
+      
+      const response = await fetch('http://localhost:8000/api/analyze', {
+        method: 'POST',
+        headers: {
+          'X-Api-Key': localStorage.getItem('gemini_api_key') || '',
+        },
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.detail || '분석 실패');
+      }
+      
+      const result = await response.json();
+      
+      // 모든 step 완료 처리 시나리오
+      for (let i = 1; i <= 7; i++) {
+        setStepStatus(prev => ({ ...prev, [i]: 'complete' }));
+        setCurrentStep(i + 1);
+      }
+      
+      // 결과 저장 및 이동
+      useAnalysisStore.getState().setResult(result);
+      navigate('/result');
+      
     } catch (err: any) {
-      setError(err.message || "분석 중 오류가 발생했습니다.");
-      updateStatus(currentStep || 1, 'error');
+      setError(err.message || '분석 중 오류가 발생했습니다');
+      setStepStatus(prev => ({ ...prev, [currentStep || 1]: 'error' }));
     } finally {
       setIsLoading(false);
     }

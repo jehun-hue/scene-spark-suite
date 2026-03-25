@@ -3,23 +3,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 
-interface TitleItem {
-  id: number;
-  title: string;
-  color: string;
+interface TitleCandidatesProps {
+  data?: { id: number; title: string; char_count?: number; scores?: any }[];
 }
 
-const titles: TitleItem[] = [
-  { id: 1, title: "세계를 뒤흔들 혁신적인 기술의 탄생", color: "bg-red-500" },
-  { id: 2, title: "당신이 몰랐던 일상의 숨겨진 미스터리", color: "bg-orange-500" },
-  { id: 3, title: "단 1분 만에 배우는 고효율 시간관리법", color: "bg-yellow-500" },
-  { id: 4, title: "미래를 바꾸는 작은 습관의 놀라운 힘", color: "bg-green-500" },
-  { id: 5, title: "지금 당장 시작해야 할 재테크 필수 전략", color: "bg-sky-500" },
-  { id: 6, title: "성공하는 사람들의 공통적인 아침 루틴", color: "bg-blue-500" },
-  { id: 7, title: "인생의 터닝포인트를 만드는 7가지 방법", color: "bg-purple-500" },
-];
+const TitleCandidates = ({ data }: TitleCandidatesProps) => {
+  const colors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-green-500", "bg-sky-500", "bg-blue-500", "bg-purple-500"];
 
-const TitleCandidates = () => {
+  const defaultTitles = [
+    { id: 1, title: "분석 결과를 기다리는 중...", color: "bg-gray-500" },
+  ];
+
+  const titles = data && data.length > 0
+    ? data.map((item, idx) => ({
+        id: item.id || idx + 1,
+        title: item.title || "제목 없음",
+        color: colors[idx % colors.length],
+      }))
+    : defaultTitles;
+
   return (
     <div className="space-y-4 p-4 bg-[#1a1a2e] rounded-xl">
       <h2 className="text-xl font-bold text-white mb-4">숏폼 제목 후보</h2>
@@ -46,3 +48,4 @@ const TitleCandidates = () => {
 };
 
 export default TitleCandidates;
+
