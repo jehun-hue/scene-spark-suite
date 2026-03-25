@@ -21,4 +21,4 @@ def generate_premiere_xml(analysis_json: dict, video_filename: str = 'source.mp4
         file_el = ET.SubElement(clipitem, 'file', id=f'file-{idx}')
         ET.SubElement(file_el, 'name').text = video_filename
         ET.SubElement(file_el, 'pathurl').text = f'file://localhost/{video_filename}'
-    return '<?xml version=1.0 encoding=UTF-8?>\n' + ET.tostring(xmeml, encoding='unicode', method='xml')
+    return chr(60) + '?xml version=' + chr(34) + '1.0' + chr(34) + ' encoding=' + chr(34) + 'UTF-8' + chr(34) + '?' + chr(62) + chr(10) + ET.tostring(xmeml, encoding='unicode', method='xml')

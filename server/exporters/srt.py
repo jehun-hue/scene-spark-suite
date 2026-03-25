@@ -14,13 +14,14 @@ def generate_srt(analysis_json: dict) -> str:
         end_str = format_srt_time(end_time)
         srt_lines.append(f'{idx + 1}')
         srt_lines.append(f'{start_str} --> {end_str}')
-        srt_lines.append(f'{subtitle}\n')
+        srt_lines.append(subtitle)
+        srt_lines.append('')
         current_time = end_time
-    return '\n'.join(srt_lines)
+    return chr(10).join(srt_lines)
 
 def format_srt_time(td: timedelta) -> str:
     ms = td.microseconds // 1000
     sec = td.seconds % 60
-    min = (td.seconds // 60) % 60
+    mn = (td.seconds // 60) % 60
     hour = (td.seconds // 3600)
-    return f'{hour:02d}:{min:02d}:{sec:02d},{ms:03d}'
+    return f'{hour:02d}:{mn:02d}:{sec:02d},{ms:03d}'
