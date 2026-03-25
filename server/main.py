@@ -529,7 +529,7 @@ viral_titles는 반드시 5개 이상 생성하라. 각 제목은 서로 다른 
 
         # Extract thumbnails
         try:
-            edit_list = result_json.get("edit_map", {}).get("edit_decision_list", [])
+            edit_list = result_json.get("edit_decision_list", []) or result_json.get("edit_map", {}).get("edit_decision_list", [])
             timecodes = [item.get("timecode", "00:00:00.000") for item in edit_list]
             print(f"Extracting {len(timecodes)} thumbnails...")
             thumbnails = extract_thumbnails(temp_file_path, timecodes, thumb_dir)
@@ -592,30 +592,42 @@ async def render_video():
 
 @app.post("/api/export/fcpxml")
 async def export_fcpxml(data: dict):
-    fcpxml_str = generate_fcpxml(data)
-    return Response(content=fcpxml_str, media_type="application/xml", 
-                    headers={"Content-Disposition": "attachment; filename=project.fcpxml"})
+    try:
+        fcpxml_str = generate_fcpxml(data)
+        return Response(content=fcpxml_str, media_type="application/xml", 
+                        headers={"Content-Disposition": "attachment; filename=project.fcpxml"})
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
 
 @app.post("/api/export/premiere")
 async def export_premiere(data: dict):
-    xml_str = generate_premiere_xml(data)
-    return Response(content=xml_str, media_type="application/xml", 
-                    headers={"Content-Disposition": "attachment; filename=project.xml"})
+    try:
+        xml_str = generate_premiere_xml(data)
+        return Response(content=xml_str, media_type="application/xml", 
+                        headers={"Content-Disposition": "attachment; filename=project.xml"})
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
 
 @app.post("/api/export/srt")
 async def export_srt(data: dict):
-    srt_str = generate_srt(data)
-    return Response(content=srt_str, media_type="text/plain", 
-                    headers={"Content-Disposition": "attachment; filename=subtitles.srt"})
+    try:
+        srt_str = generate_srt(data)
+        return Response(content=srt_str, media_type="text/plain", 
+                        headers={"Content-Disposition": "attachment; filename=subtitles.srt"})
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
 
 @app.post("/api/export/zip")
 async def export_zip(data: dict):
-    fcp = generate_fcpxml(data)
-    pre = generate_premiere_xml(data)
-    srt = generate_srt(data)
-    zip_bytes = create_export_zip(fcp, pre, srt)
-    return Response(content=zip_bytes, media_type="application/zip", 
-                    headers={"Content-Disposition": "attachment; filename=scene-spark-export.zip"})
+    try:
+        fcp = generate_fcpxml(data)
+        pre = generate_premiere_xml(data)
+        srt = generate_srt(data)
+        zip_bytes = create_export_zip(fcp, pre, srt)
+        return Response(content=zip_bytes, media_type="application/zip", 
+                        headers={"Content-Disposition": "attachment; filename=scene-spark-export.zip"})
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
 
 if __name__ == "__main__":
     import uvicorn
