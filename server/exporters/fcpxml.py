@@ -86,16 +86,17 @@ def generate_fcpxml(analysis_json: dict, video_filename: str = 'source.mp4', fps
         lines.append(f'            <video ref="r1" offset="{start_rat}" duration="{dur_rat}"/>')
         if subtitle:
             sub_esc = subtitle.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            ts_id = f"ts{idx+1}"
             lines.append(f'            <title ref="r2" name="{sub_esc}" offset="0/1s" duration="{dur_rat}" start="3600/1s">')
-            lines.append(f'              <text><text-style ref="ts1">{sub_esc}</text-style></text>')
-            lines.append('              <text-style-def id="ts1"><text-style font="Arial" fontSize="42" fontColor="1 1 1 1" bold="1"/></text-style-def>')
+            lines.append(f'              <text><text-style ref="{ts_id}">{sub_esc}</text-style></text>')
+            lines.append(f'              <text-style-def id="{ts_id}"><text-style font="Arial" fontSize="42" fontColor="1 1 1 1" bold="1"/></text-style-def>')
             lines.append('            </title>')
         lines.append('          </clip>')
     if title_text:
         t_esc = title_text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
         lines.append(f'          <title ref="r2" name="{t_esc}" lane="1" offset="0/1s" duration="{total_dur_rat}" start="3600/1s">')
-        lines.append(f'            <text><text-style ref="ts2">{t_esc}</text-style></text>')
-        lines.append('            <text-style-def id="ts2"><text-style font="Arial" fontSize="36" fontColor="1 1 0.2 1" bold="1"/></text-style-def>')
+        lines.append(f'            <text><text-style ref="ts_title">{t_esc}</text-style></text>')
+        lines.append('            <text-style-def id="ts_title"><text-style font="Arial" fontSize="36" fontColor="1 1 0.2 1" bold="1"/></text-style-def>')
         lines.append('          </title>')
     lines.append('          </spine>')
     lines.append('        </sequence>')

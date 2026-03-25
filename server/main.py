@@ -612,8 +612,13 @@ async def export_premiere(data: dict):
 async def export_srt(data: dict):
     try:
         srt_str = generate_srt(data)
-        return Response(content=srt_str, media_type="text/plain", 
-                        headers={"Content-Disposition": "attachment; filename=subtitles.srt"})
+        return Response(
+            content=srt_str, 
+            media_type="text/plain; charset=utf-8",
+            headers={
+                "Content-Disposition": 'attachment; filename="scene_spark.srt"',
+            }
+        )
     except Exception as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
 
