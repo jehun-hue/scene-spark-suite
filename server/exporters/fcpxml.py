@@ -64,7 +64,7 @@ def generate_fcpxml(analysis_json: dict, video_filename: str = 'source.mp4', fps
     lines.append(f'    <asset id="r1" name="{video_filename}" duration="{total_dur_rat}" hasVideo="1" hasAudio="1" format="r0">')
     lines.append(f'      <media-rep kind="original-media" src="./{video_filename}"/>')
     lines.append('    </asset>')
-    lines.append('    <effect id="r2" name="Basic Title" uid=".../Titles.localized/Basic Title.moti"/>')
+    lines.append('    <effect id="r2" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>')
     lines.append('  </resources>')
     lines.append('  <library>')
     lines.append('    <event name="SceneSpark Export">')
