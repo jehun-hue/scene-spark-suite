@@ -56,17 +56,25 @@ def generate_fcpxml(analysis_json: dict, video_filename: str = "source.mp4", fps
     - 하단 자막
     - 상단 제목 고정
     """
-    edl = analysis_json.get("edit_map", {}).get("edit_decision_list", [])
+    edl = (analysis_json.get("edit_decision_list")
+           or analysis_json.get("edit_map", {}).get("edit_decision_list")
+           or analysis_json.get("edit_engineering", {}).get("edit_decision_list")
+           or analysis_json.get("edit_engineering", {}).get("edl")
+           or [])
     if not edl:
         raise ValueError("edit_decision_list가 비어있습니다")
 
     # 제목 추출
     title_text = ""
-    vt = analysis_json.get("production", {}).get("viral_titles", {})
-    if vt and vt.get("A_main", {}).get("title"):
-        title_text = vt["A_main"]["title"]
-    elif analysis_json.get("A_main", {}).get("title"):
-        title_text = analysis_json["A_main"]["title"]
+    vt = (analysis_json.get("production", {}).get("viral_titles")
+          or analysis_json.get("viral_titles")
+          or [])
+    if isinstance(vt, list) and len(vt) > 0:
+        first = vt[0]
+        title_text = first.get("title", "") if isinstance(first, dict) else str(first)
+    elif isinstance(vt, dict):
+        if vt.get("A_main", {}).get("title"):
+            title_text = vt["A_main"]["title"]
 
     # 전체 영상 길이 계산
     last_start, last_end = _parse_range(edl[-1]["timecode"])
@@ -100,7 +108,7 @@ def generate_fcpxml(analysis_json: dict, video_filename: str = "source.mp4", fps
             continue
 
         effects = _detect_effects(item.get("edit_event", ""))
-        subtitle = item.get("subtitle_text", "").strip()
+        subtitle = (item.get("subtitle") or item.get("subtitle_text") or item.get("자막") or item.get("caption") or "").strip()
 
         offset_rat = _seconds_to_rational(start, fps)
         start_rat = _seconds_to_rational(start, fps)
