@@ -494,6 +494,7 @@ async def analyze_video(file: UploadFile = File(...), x_api_key: str = Header(No
   "thumbnails": []
 }
 ```
+viral_titles는 반드시 5개 이상 생성하라. 각 제목은 서로 다른 전략(호기심, 검색최적화, 감정자극, 반전, 공감)을 사용하라.
 위 키 이름을 한 글자도 바꾸지 마라. 값만 채워라. """
 
         full_prompt = prompt_content + json_schema_instruction
