@@ -15,9 +15,15 @@ def _tc_to_seconds(tc: str) -> float:
 
 
 def _parse_range(tc_range: str):
-    """'00:04~00:05' -> (4.0, 5.0)"""
-    parts = tc_range.split("~")
-    return _tc_to_seconds(parts[0]), _tc_to_seconds(parts[1])
+    """'00:04~00:05' 또는 '00:04-00:05' -> (4.0, 5.0)"""
+    if '~' in tc_range:
+        parts = tc_range.split('~')
+        return _tc_to_seconds(parts[0]), _tc_to_seconds(parts[1])
+    match = re.match(r'^(\d+:\d+(?::\d+)?(?:\.\d+)?)\s*-\s*(\d+:\d+(?::\d+)?(?:\.\d+)?)$', tc_range.strip())
+    if match:
+        return _tc_to_seconds(match.group(1)), _tc_to_seconds(match.group(2))
+    parts = tc_range.split('-')
+    return _tc_to_seconds(parts[0]), _tc_to_seconds(parts[-1])
 
 
 def _seconds_to_rational(s: float, fps: int = 30) -> str:
